@@ -1,16 +1,17 @@
 var fs     = require("fs"),
     path   = require("path"),
     should = require("should"),
-    wrench = require("wrench"),
     File   = require("../");
 
-describe("File()", function () {
+describe("File", function () {
     var loc = path.join(__dirname, "tmp/a.txt"),
         file = new File(loc);
 
     function clean(done) {
-        wrench.rmdirRecursive(path.join(__dirname, "tmp"), function () {
-            done();
+        file.unlink(function () {
+            fs.rmdir(path.join(__dirname, "tmp"), function () {
+                done();
+            });
         });
     }
 
