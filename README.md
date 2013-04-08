@@ -8,7 +8,7 @@ Include in your project, the export is a single constructor function
 
     var File = require("file-class");
 
-## Usage
+## API Documentation
 
 ### File(location, [options]) <small>constructor</small>
 
@@ -150,7 +150,7 @@ file.stat(function (err, stats) {
 });
 ```
 
-<hr>
+----
 
 ### File.JSONFile(location, [options]) <small>constructor</small>
 
@@ -189,16 +189,19 @@ json.merge({ foo: "bar" }, function (err, contents) {
 });
 ```
 
-<hr>
+----
 
 ### File.ListFile(location, [options]) <small>constructor</small>
 
-The constructor will create an object representing a file on disk whose contents are comprised of one item per-line. This object exposes helper methods for dealing with that collection.
+The constructor will create an object representing a file on disk whose contents
+are comprised of one item per-line. This object exposes helper methods for
+dealing with that collection.
 
 **Arguments**
 
  * location - same as `File`
- * options - same as `File`
+ * options
+    * ignore - `String`, `RegExp`, `Function`
 
 ```javascript
 var list = new File.ListFile("banned.txt");
@@ -207,6 +210,36 @@ list.read(function (err, users) {
    // users => array of users (one per line of file)
 });
 ```
+
+### File.ListFile#ignore
+
+This property can be added via the `options` object in the constructor, or can
+be set manually as an object property.
+
+If a `String`, any line beginning with that same string will be ignored.
+
+If a `RegExp`, any line that matches the regular expression will be ignored.
+
+If a `Function`, any line that returns `true` when executing the function will be ignored.
+
+```javascript
+
+var list = new File.ListFile("banned.txt", { ignore: "#" });
+
+// or perhaps
+list.ignore = /^#/;
+
+// or even
+list.ignore = function (line) {
+    return line[0] === "#";
+};
+
+list.read(function (err, users) {
+    // users => will exclude entries that begin with a '#' character
+    //          any of the above methods yield the same result in this case
+});
+```
+
 
 ### File.ListFile#indexOf(item, callback)
 
@@ -281,16 +314,3 @@ list.add("hello world", function (err) {
     // err => null or Error()
 });
 ```
-
-<hr>
-
-## ChangeLog
-
- - **v0.1.0** Updating API documentation, adding JSONFile and ListFile special methods and options
- - **v0.0.1** Initial Release
-
-## Upcoming Features
-
- - Complete API for files (stream, chmod, rename, etc)
- - Additional File Types (YAML, ini, etc)
- - Use lodash/underscore.js for ListFile collections?

@@ -1,10 +1,11 @@
 var fs       = require("fs"),
     path     = require("path"),
     should   = require("should"),
-    ListFile = require("../").ListFile;
+    ListFile = require("../").ListFile,
+    location = path.join(__dirname, "tmp/test.txt");
 
 describe("ListFile", function () {
-    var file = new ListFile(path.join(__dirname, "tmp/test.json"));
+    var file = new ListFile(location);
 
     after(function (done) {
         file.unlink(function () {
@@ -12,9 +13,39 @@ describe("ListFile", function () {
         });
     });
 
+    describe("#ignore", function () {
+        after(function () {
+            delete file.ignore;
+        });
+
+        it("should ignore a line beginning with the string specified", function () {
+            file.ignore = "#";
+
+            file.parse("# this is a comment \nfoo\nbar").should.eql([ "foo", "bar" ]);
+        });
+
+        it("should ignore a line matching the regex specified", function () {
+            file.ignore = /^#/;
+
+            file.parse("# this is a comment \nfoo\nbar").should.eql([ "foo", "bar" ]);
+        });
+
+        it("should ignore a line for which the callback returns true", function () {
+            file.ignore = function (line) {
+                return line[0] === "#";
+            };
+
+            file.parse("# this is a comment \nfoo\nbar").should.eql([ "foo", "bar" ]);
+        });
+    });
+
     describe("#parse()", function () {
         it("should turn each line into an array item", function () {
             file.parse("a\nb").should.eql([ "a", "b" ]);
+        });
+
+        it("should ignore empty lines", function () {
+            file.parse("a\n\nb\nc").should.eql([ "a", "b", "c" ]);
         });
     });
 
