@@ -314,16 +314,3 @@ list.add("hello world", function (err) {
     // err => null or Error()
 });
 ```
-
-----
-
-## ChangeLog
-
- - **v0.1.0** Updating API documentation, adding JSONFile and ListFile special methods and options
- - **v0.0.1** Initial Release
-
-## Upcoming Features
-
- - Complete API for files (stream, chmod, rename, etc)
- - Additional File Types (YAML, ini, etc)
- - Use lodash/underscore.js for ListFile collections?
