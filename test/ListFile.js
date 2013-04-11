@@ -47,6 +47,10 @@ describe("ListFile", function () {
         it("should ignore empty lines", function () {
             file.parse("a\n\nb\nc").should.eql([ "a", "b", "c" ]);
         });
+
+        it("should return an empty array for an empty file", function () {
+            file.parse("").should.eql([]);
+        });
     });
 
     describe("#stringify()", function () {
