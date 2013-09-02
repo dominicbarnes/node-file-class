@@ -222,6 +222,8 @@ If a `RegExp`, any line that matches the regular expression will be ignored.
 
 If a `Function`, any line that returns `true` when executing the function will be ignored.
 
+**NOTE** Empty lines (this includes lines that consist only of whitespace) are always ignored.
+
 ```javascript
 
 var list = new File.ListFile("banned.txt", { ignore: "#" });

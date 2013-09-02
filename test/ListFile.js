@@ -9,12 +9,14 @@ describe("ListFile", function () {
 
     after(function (done) {
         file.unlink(function () {
-            fs.rmdir(path.join(__dirname, "tmp"), done);
+            fs.rmdir(path.join(__dirname, "tmp"), function () {
+                done();
+            });
         });
     });
 
     describe("#ignore", function () {
-        after(function () {
+        afterEach(function () {
             delete file.ignore;
         });
 
@@ -22,12 +24,14 @@ describe("ListFile", function () {
             file.ignore = "#";
 
             file.parse("# this is a comment \nfoo\nbar").should.eql([ "foo", "bar" ]);
+            file.parse("").should.have.length(0);
         });
 
         it("should ignore a line matching the regex specified", function () {
             file.ignore = /^#/;
 
             file.parse("# this is a comment \nfoo\nbar").should.eql([ "foo", "bar" ]);
+            file.parse("").should.have.length(0);
         });
 
         it("should ignore a line for which the callback returns true", function () {
@@ -36,6 +40,7 @@ describe("ListFile", function () {
             };
 
             file.parse("# this is a comment \nfoo\nbar").should.eql([ "foo", "bar" ]);
+            file.parse("").should.have.length(0);
         });
     });
 
@@ -48,8 +53,8 @@ describe("ListFile", function () {
             file.parse("a\n\nb\nc").should.eql([ "a", "b", "c" ]);
         });
 
-        it("should return an empty array for an empty file", function () {
-            file.parse("").should.eql([]);
+        it("should return an empty array for empty input", function () {
+            file.parse("").should.have.length(0);
         });
     });
 
